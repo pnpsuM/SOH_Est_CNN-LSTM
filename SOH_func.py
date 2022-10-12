@@ -14,7 +14,7 @@ def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list):
     return data, data_y
 
 def seq_gen(data_x, data_y, seq_len = 5):
-    num_batch = int(np.floor(data_x.shape[0] / seq_len)) - 1
+    num_batch = int(np.floor(data_x.shape[0] / seq_len))
     print(f'num_batch = {num_batch}')
     x_data = []
     y_data = []
@@ -26,16 +26,20 @@ def seq_gen(data_x, data_y, seq_len = 5):
     print(f'x = {x_data.shape}')
     print(f'y = {y_data.shape}')
     
-    return split_data(x_data, y_data, num_batch)
+    return x_data, y_data, num_batch
 
 def split_data(x_data, y_data, num_batch):
     
-    split_len = int(round(num_batch * 0.75))
+    split_len = int(round(num_batch * 0.8))
     print(f'split_len = {split_len}')
-    x_train = x_data[:split_len]
-    y_train = y_data[:split_len]
-    x_test = x_data[split_len:]
-    y_test = y_data[split_len:]
-    print(y_train.shape)
+    x_train = x_data[:, :, :split_len]
+    y_train = y_data[:, :, :split_len]
+    x_test = x_data[:, :, split_len:]
+    y_test = y_data[:, :, split_len:]
+    print(f'x_train = {x_train.shape}')
+    print(f'y_train = {y_train.shape}')
     
     return x_train, y_train, x_test, y_test
+
+# def train_and_show(model, loss_dict, callback, data_x, data_y, epoch_index):
+    
