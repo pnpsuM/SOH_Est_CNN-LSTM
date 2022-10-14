@@ -42,7 +42,7 @@ def split_data(x_data, y_data, num_batch):
     
     return x_train, y_train, x_test, y_test
 
-def show_and_proof(model, epoch_index, x_train, y_train, loss_dict, param):
+def show_and_prove(model, epoch_index, x_train, y_train, loss_dict, param):
     # param = {'seq_len' : 25, 'sample_len' : 25, 'num_units' : 64, 'num_filters' : 64, 'window' : 3, 'drop_rate' : 0.2, 'num_epochs' : 800}
     model.load_weights(f'Checkpoints\SOH_Checkpoint_{epoch_index}.h5')
     loss = model.evaluate(x_train, y_train)
