@@ -42,18 +42,18 @@ def split_data(x_data, y_data, num_batch):
     
     return x_train, y_train, x_test, y_test
 
-def show_and_prove(model, epoch_index, x_train, y_train, loss_dict, param):
+def show_and_prove(model, VERSION, epoch_index, x_train, y_train, loss_dict, param):
     # param = {'seq_len' : 25, 'sample_len' : 25, 'num_units' : 64, 'num_filters' : 64, 'window' : 3, 'drop_rate' : 0.2, 'num_epochs' : 800}
-    model.load_weights(f'Checkpoints\SOH_Checkpoint_{epoch_index}.h5')
+    model.load_weights(f'Checkpoints\SOH_{VERSION}_Checkpoint.h5')
     loss = model.evaluate(x_train, y_train)
     loss_dict[f'loss_{epoch_index}'] = loss
     prediction = model.predict(x_train)
     prediction = prediction.reshape(int(prediction.shape[0] * prediction.shape[1] * prediction.shape[2]), 1) 
     y_graph = y_train.reshape(int(y_train.shape[0] * y_train.shape[1] * y_train.shape[2]), 1)
     print(prediction.shape, y_graph.shape)
-    print(f'Estimation-{param["num_filters"]}FL-{param["num_units"]}UN-{epoch_index}EP-{param["seq_len"]}SQ')
+    print(f'Estimation{VERSION}-{param["num_filters"]}FL-{param["num_units"]}UN-{epoch_index}EP-{param["seq_len"]}SQ')
     pl.figure(dpi=150)
     pl.plot(prediction)
     pl.plot(y_graph)
-    pl.savefig(f'output\Estimation-{param["num_filters"]}FL-{param["num_units"]}UN-{epoch_index}EP-{param["seq_len"]}SQ.png')
+    pl.savefig(f'output\Estimation{VERSION}-{param["num_filters"]}FL-{param["num_units"]}UN-{epoch_index}EP-{param["seq_len"]}SQ.png')
     pl.show()
