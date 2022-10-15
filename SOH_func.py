@@ -16,8 +16,8 @@ def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list):
     data = pd.read_csv(NAME)
     data_y = data.copy()
     data = data.drop(drop_labels_x, axis = 1)
-    print(data.columns)
     data_y = data_y.drop(drop_labels_y, axis = 1)
+    print(data.columns)
     print(data_y.columns)
     data = data.values
     data_y = data_y.values
@@ -36,7 +36,6 @@ def seq_gen(data_x, data_y, seq_len = 5):
         np.array, np.array, int: sequence-divided input and output data, and # of batches
     """
     num_batch = int(np.floor(data_x.shape[0] / seq_len))
-    print(f'num_batch = {num_batch}')
     x_data = []
     y_data = []
     for batch in range(num_batch):
@@ -44,8 +43,6 @@ def seq_gen(data_x, data_y, seq_len = 5):
         y_data.append(data_y[batch * seq_len + 1:(batch + 1) * seq_len + 1])
     x_data = np.array(x_data).astype(np.float32)
     y_data = np.array(y_data).astype(np.float32)
-    print(f'x = {x_data.shape}')
-    print(f'y = {y_data.shape}')
     
     return x_data, y_data, num_batch
 
@@ -104,7 +101,7 @@ def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = Fals
     RMSE_total, MAE_total, Error_rate, prediction_graph, y_graph = prove(model, h5_path, x_data, y_data)
     
     print(prediction_graph.shape, y_graph.shape)
-    print({save_path})
+    print(save_path)
     
     pl.figure(dpi=150)
     pl.ylabel('SOH Error (%)')
