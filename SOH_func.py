@@ -82,7 +82,7 @@ def prove(model, h5_path, x_data, y_data):
     
     return RMSE_total, MAE_total, Error_rate, prediction_graph, y_graph
         
-def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = False, show_y = True):
+def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = False, show_y = True, plot = True):
     """Shows prediction and y data graphs. Also returns RMSE, MAE, and Error-by-steps.
 
     Args:
@@ -100,20 +100,20 @@ def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = Fals
     # param = {'seq_len' : 25, 'sample_len' : 25, 'num_units' : 64, 'num_filters' : 64, 'window' : 3, 'drop_rate' : 0.2, 'num_epochs' : 800}
     RMSE_total, MAE_total, Error_rate, prediction_graph, y_graph = prove(model, h5_path, x_data, y_data)
     
-    print(prediction_graph.shape, y_graph.shape)
+    print(prediction_graph.shape)
     print(save_path)
-    
-    pl.figure(dpi=150)
-    pl.ylabel('SOH Error (%)')
-    pl.xlabel('Cycles')
-    line = pl.plot(prediction_graph, label = 'SOH Estimation')
-    pl.setp(line, linewidth=0.5)
-    if show_y:
-        y_line = pl.plot(y_graph, label = 'SOH Reference')
-        pl.setp(y_line, linewidth=0.5)
-    pl.savefig(f'{save_path}\Estimation.png')
-    pl.legend()
-    pl.show()
+    if plot:
+        pl.figure(dpi=150)
+        pl.ylabel('SOH Error (%)')
+        pl.xlabel('Cycles')
+        line = pl.plot(prediction_graph, label = 'SOH Estimation')
+        pl.setp(line, linewidth=0.5)
+        if show_y:
+            y_line = pl.plot(y_graph, label = 'SOH Reference')
+            pl.setp(y_line, linewidth=0.5)
+        pl.savefig(f'{save_path}\Estimation.png')
+        pl.legend()
+        pl.show()
     
     if return_loss:
         return RMSE_total, MAE_total, Error_rate
