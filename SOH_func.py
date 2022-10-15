@@ -90,7 +90,7 @@ def show_and_prove(model, VERSION, file_path, epoch_index, x_data, y_data, loss_
     pl.plot(prediction)
     if show_y:
         pl.plot(y_graph)
-    pl.savefig(f'output\Estimation{VERSION}-{param["num_filters"]}FL-{param["num_units"]}UN-{epoch_index}EP-{param["seq_len"]}SQ.png')
+    pl.savefig(f'output\Estimation-{param["num_filters"]}FL-{param["num_units"]}UN-{epoch_index}EP-{param["seq_len"]}SQ.png')
     pl.show()
     
     if return_loss:
