@@ -24,31 +24,45 @@ def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list):
     
     return data, data_y
 
-def seq_gen(data_x, data_y, seq_len = 5):
-    """Gets input and output data and returns '+1 dimensional' datas divided by seq_len(sequence length).
+def seq_gen_x(data_x, seq_len = 5):
+    """Gets input data and returns '+1 dimensional' datas divided by seq_len(sequence length).
 
     Args:
         data_x (list): Input data
+        seq_len (int, optional): sequence length. Defaults to 5.
+
+    Returns:
+        np.array: sequence-divided input data
+    """
+    num_batch = int(np.floor(data_x.shape[0] / seq_len))
+    x_data = []
+    for batch in range(num_batch):
+        x_data.append(data_x[batch * seq_len:(batch + 1) * seq_len])
+    x_data = np.array(x_data).astype(np.float32)
+    
+    return x_data
+
+def seq_gen_y(data_y, seq_len = 5):
+    """Gets output data and returns '+1 dimensional' datas divided by seq_len(sequence length).
+
+    Args:
         data_y (list): Output data
         seq_len (int, optional): sequence length. Defaults to 5.
 
     Returns:
-        np.array, np.array, int: sequence-divided input and output data, and # of batches
+        np.array: sequence-divided output data
     """
-    num_batch = int(np.floor(data_x.shape[0] / seq_len))
-    x_data = []
+    num_batch = int(np.floor(data_y.shape[0] / seq_len))
     y_data = []
     for batch in range(num_batch):
-        x_data.append(data_x[batch * seq_len:(batch + 1) * seq_len])
         y_data.append(data_y[batch * seq_len + 1:(batch + 1) * seq_len + 1])
-    x_data = np.array(x_data).astype(np.float32)
     y_data = np.array(y_data).astype(np.float32)
     
-    return x_data, y_data, num_batch
+    return y_data
 
-def split_data(x_data, y_data, num_batch):
+def split_data(x_data, y_data):
     
-    split_len = int(round(num_batch * 0.8))
+    split_len = int(round(x_data.shape[0] * 0.8))
     print(f'split_len = {split_len}')
     x_train = x_data[:, :, :split_len]
     y_train = y_data[:, :, :split_len]
@@ -111,8 +125,8 @@ def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = Fals
         if show_y:
             y_line = pl.plot(y_graph, label = 'SOH Reference')
             pl.setp(y_line, linewidth=0.5)
-        pl.savefig(f'{save_path}\Estimation.png')
         pl.legend()
+        pl.savefig(f'{save_path}\Estimation.png')
         pl.show()
     
     if return_loss:
