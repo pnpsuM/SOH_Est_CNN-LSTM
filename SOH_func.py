@@ -21,6 +21,12 @@ def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list):
     print(data_y.columns)
     data = data.values
     data_y = data_y.values
+    data = data[35:]
+    data_y = data_y[35:]
+    print(f'{NAME} => {data.shape}')
+    pl.figure(dpi = 50)
+    pl.plot(data_y)
+    pl.show()
     
     return data, data_y
 
@@ -34,10 +40,10 @@ def seq_gen_x(data_x, seq_len = 5):
     Returns:
         np.array: sequence-divided input data
     """
-    num_batch = int(np.floor(data_x.shape[0] / seq_len))
+    num_batch = int(np.floor(data_x.shape[0] / seq_len) - 1)
     x_data = []
     for batch in range(num_batch):
-        x_data.append(data_x[batch * seq_len:(batch + 1) * seq_len])
+        x_data.append(data_x[(batch) * seq_len:(batch + 1) * seq_len])
     x_data = np.array(x_data).astype(np.float32)
     
     return x_data
@@ -52,10 +58,10 @@ def seq_gen_y(data_y, seq_len = 5):
     Returns:
         np.array: sequence-divided output data
     """
-    num_batch = int(np.floor(data_y.shape[0] / seq_len))
+    num_batch = int(np.floor(data_y.shape[0] / seq_len) - 1)
     y_data = []
     for batch in range(num_batch):
-        y_data.append(data_y[batch * seq_len + 1:(batch + 1) * seq_len + 1])
+        y_data.append(data_y[(batch) * seq_len + 1:(batch + 1) * seq_len + 1])
     y_data = np.array(y_data).astype(np.float32)
     
     return y_data
