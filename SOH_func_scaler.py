@@ -23,6 +23,8 @@ def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list, regularizat
     data_y = data_y.drop(drop_labels_y, axis = 1)
     print(data.columns)
     print(data_y.columns)
+    data = data[35:]
+    data_y = data_y[35:]
     if regularization:
         scaler.fit(data)
         data = scaler.transform(data)
@@ -31,8 +33,6 @@ def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list, regularizat
     else:
         data = data.values
         data_y = data_y.values
-    data = data[35:]
-    data_y = data_y[35:]
     print(f'{NAME} => {data.shape}')
     pl.figure(dpi = 50)
     pl.plot(data_y)
