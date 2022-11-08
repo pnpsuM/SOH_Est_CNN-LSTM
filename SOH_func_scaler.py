@@ -90,7 +90,7 @@ def split_data(x_data, y_data):
     return x_train, y_train, x_test, y_test
 
 def flatten_2Dto1D(data):
-    data_flatten = data.reshape(int(data.shape[0] * data.shape[1] * data.shape[2]), 1)
+    data_flatten = data.reshape(-1, 1)
     
     return data_flatten
 
