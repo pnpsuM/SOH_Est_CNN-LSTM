@@ -50,10 +50,9 @@ def seq_gen_x(data_x, seq_len = 5):
     Returns:
         np.array: sequence-divided input data
     """
-    num_batch = int(np.floor(data_x.shape[0] / seq_len) - 1) # np.array 생성 시 y_data 가 +1 쉬;프트 됨에 따른 오류 방지를 위한 - 1
     x_data = []
-    for batch in range(num_batch):
-        x_data.append(data_x[(batch) * seq_len:(batch + 1) * seq_len])
+    for i in range(seq_len, len(data_x)):
+        x_data.append(data_x[i - seq_len:i])
     x_data = np.array(x_data).astype(np.float32)
     
     return x_data
@@ -68,10 +67,9 @@ def seq_gen_y(data_y, seq_len = 5):
     Returns:
         np.array: sequence-divided output data
     """
-    num_batch = int(np.floor(data_y.shape[0] / seq_len) - 1)
     y_data = []
-    for batch in range(num_batch):
-        y_data.append(data_y[(batch) * seq_len + 1:(batch + 1) * seq_len + 1])
+    for i in range(seq_len, len(data_y)):
+        y_data.append([data_y[i]])
     y_data = np.array(y_data).astype(np.float32)
     
     return y_data
