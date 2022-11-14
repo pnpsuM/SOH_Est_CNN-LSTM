@@ -132,7 +132,7 @@ def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = Fals
     print(save_path)
     if plot:
         pl.figure(dpi=150)
-        pl.ylabel('SOH Error (%)')
+        pl.ylabel('SOH Est.-Ref. Comparison')
         pl.xlabel('Cycles')
         line = pl.plot(prediction_graph, label = 'SOH Estimation')
         pl.setp(line, linewidth=0.5)
@@ -140,7 +140,7 @@ def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = Fals
             y_line = pl.plot(y_graph, label = 'SOH Reference')
             pl.setp(y_line, linewidth=0.5)
         pl.legend()
-        pl.savefig(f'{save_path}\Estimation.png')
+        pl.savefig(f'{save_path}\Estimation-RMSE({RMSE_total:.4f})MAE({MAE_total:.4f}).png')
         pl.show()
     
     if return_loss:
