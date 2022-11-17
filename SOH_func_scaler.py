@@ -1,9 +1,12 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as pl
+from sklearn.preprocessing import MinMaxScaler
 
-def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list):
-    """Reads .csv data and returns data(up to 2D) and data_y(1D) 
+scaler = MinMaxScaler(feature_range=(0.1, 1.1))
+
+def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list, regularization = True):
+    """Reads .csv data and returns data(up to 2D) and data_y(1D), data regularized by 0 ~ 1.
 
     Args:
         NAME (str): File location
@@ -13,16 +16,23 @@ def get_data(NAME : str, drop_labels_x : list, drop_labels_y : list):
     Returns:
         list, list: Input and output data before the sequence generation
     """
+    
     data = pd.read_csv(NAME)
     data_y = data.copy()
     data = data.drop(drop_labels_x, axis = 1)
     data_y = data_y.drop(drop_labels_y, axis = 1)
     print(data.columns)
     print(data_y.columns)
-    data = data.values
-    data_y = data_y.values
     data = data[35:]
     data_y = data_y[35:]
+    if regularization:
+        scaler.fit(data)
+        data = scaler.transform(data)
+        scaler.fit(data_y)
+        data_y = scaler.transform(data_y)
+    else:
+        data = data.values
+        data_y = data_y.values
     print(f'{NAME} => {data.shape}')
     pl.figure(dpi = 50)
     pl.plot(data_y)
@@ -40,10 +50,9 @@ def seq_gen_x(data_x, seq_len = 5):
     Returns:
         np.array: sequence-divided input data
     """
-    num_batch = int(np.floor(data_x.shape[0] / seq_len) - 1)
     x_data = []
-    for batch in range(num_batch):
-        x_data.append(data_x[(batch) * seq_len:(batch + 1) * seq_len])
+    for i in range(seq_len, len(data_x)):
+        x_data.append(data_x[i - seq_len:i])
     x_data = np.array(x_data).astype(np.float32)
     
     return x_data
@@ -58,10 +67,9 @@ def seq_gen_y(data_y, seq_len = 5):
     Returns:
         np.array: sequence-divided output data
     """
-    num_batch = int(np.floor(data_y.shape[0] / seq_len) - 1)
     y_data = []
-    for batch in range(num_batch):
-        y_data.append(data_y[(batch) * seq_len + 1:(batch + 1) * seq_len + 1])
+    for i in range(seq_len, len(data_y)):
+        y_data.append([data_y[i]])
     y_data = np.array(y_data).astype(np.float32)
     
     return y_data
@@ -80,7 +88,7 @@ def split_data(x_data, y_data):
     return x_train, y_train, x_test, y_test
 
 def flatten_2Dto1D(data):
-    data_flatten = data.reshape(int(data.shape[0] * data.shape[1] * data.shape[2]), 1)
+    data_flatten = data.reshape(-1, 1)
     
     return data_flatten
 
@@ -124,6 +132,7 @@ def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = Fals
     print(save_path)
     if plot:
         pl.figure(dpi=150)
+        pl.ylabel('SOH Est.-Ref. Comparison')
         pl.xlabel('Cycles')
         line = pl.plot(prediction_graph, label = 'SOH Estimation')
         pl.setp(line, linewidth=0.5)
@@ -131,7 +140,7 @@ def show_and_prove(model, h5_path, x_data, y_data, save_path, return_loss = Fals
             y_line = pl.plot(y_graph, label = 'SOH Reference')
             pl.setp(y_line, linewidth=0.5)
         pl.legend()
-        pl.savefig(f'{save_path}\Estimation.png')
+        pl.savefig(f'{save_path}\Estimation-RMSE({RMSE_total:.4f})MAE({MAE_total:.4f}).png')
         pl.show()
     
     if return_loss:
